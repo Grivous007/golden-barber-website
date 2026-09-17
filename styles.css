@@ -130,7 +130,7 @@ img { display: block; max-width: 100%; }
 
 .brand-meta {
   font-family: "IBM Plex Mono", monospace;
-  font-size: 0.62rem;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
   color: var(--gold);
   margin-top: 2px;
@@ -318,7 +318,7 @@ img { display: block; max-width: 100%; }
 .section-index {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.78rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   color: var(--gold);
   margin: 0 0 14px;
 }
@@ -481,12 +481,11 @@ img { display: block; max-width: 100%; }
   background: var(--bg-panel);
   padding: 30px;
   margin: 0;
-  border-left: 3px solid var(--gold);
 }
 .review-meta {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.7rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--gold);
   margin-bottom: 14px;
 }
