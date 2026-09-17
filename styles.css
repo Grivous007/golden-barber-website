@@ -92,6 +92,20 @@ img { display: block; max-width: 100%; }
   );
 }
 
+/* Focal moment: the stripe is lifted straight from the shop's real
+   barber pole, so it is the one element on the page that earns an
+   authored, always-legible loop. It only spins while in view
+   (toggled in script.js) and stays static under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .pole-stripe.is-active {
+    animation: pole-rotate 1.6s linear infinite;
+  }
+}
+@keyframes pole-rotate {
+  from { background-position: 0 0; }
+  to { background-position: -42px 0; }
+}
+
 /* ---------- Header ---------- */
 
 .site-header {
@@ -131,20 +145,26 @@ img { display: block; max-width: 100%; }
 .brand-meta {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.7rem;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   color: var(--gold);
   margin-top: 2px;
 }
 
 .main-nav {
   display: flex;
-  gap: 28px;
   flex: 1;
   justify-content: center;
   font-family: "IBM Plex Mono", monospace;
 }
 
+.nav-inner {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
 .main-nav a {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -156,6 +176,20 @@ img { display: block; max-width: 100%; }
   white-space: nowrap;
 }
 .main-nav a:hover { color: var(--gold); }
+.main-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -6px;
+  height: 2px;
+  background: var(--gold);
+}
+.main-nav a:hover::after { right: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .main-nav a::after { transition: right 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+}
 
 .nav-index {
   color: var(--gold);
@@ -191,6 +225,7 @@ img { display: block; max-width: 100%; }
 /* ---------- Buttons ---------- */
 
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -203,9 +238,33 @@ img { display: block; max-width: 100%; }
   white-space: nowrap;
   border-radius: 0;
   border: 1.5px solid var(--ink);
+  overflow: hidden;
   transition: background 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease);
 }
 .btn:active { transform: translateY(1px); }
+
+/* Hover feedback reads as a HUD control activating: a single sweep,
+   not a repeating shimmer, so it never competes with the pole loop. */
+.btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -12%;
+  width: 30%;
+  height: 200%;
+  transform: translateX(-320%) skewX(-18deg);
+  pointer-events: none;
+}
+.btn:hover::before { transform: translateX(420%) skewX(-18deg); }
+
+/* Sweep color follows each button's own hover surface so it stays
+   visible instead of washing out (white-on-cream was invisible). */
+.btn-primary::before { background: rgba(12, 11, 9, 0.22); }
+.btn-ghost::before { background: rgba(236, 231, 220, 0.28); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn::before { transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1); }
+}
 
 .btn-primary {
   background: var(--gold);
@@ -391,6 +450,22 @@ img { display: block; max-width: 100%; }
   padding: 13px 4px;
   background: var(--bg-panel);
 }
+
+/* Stagger: this is a genuine list, so items arrive one after another
+   instead of the whole board appearing as one block. Capped under
+   250ms total so it reads as a beat, not a wait. */
+@media (prefers-reduced-motion: no-preference) {
+  .price-row {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  }
+  .price-group.is-visible .price-row { opacity: 1; transform: translateY(0); }
+  .price-group.is-visible .price-row:nth-child(1) { transition-delay: 0ms; }
+  .price-group.is-visible .price-row:nth-child(2) { transition-delay: 70ms; }
+  .price-group.is-visible .price-row:nth-child(3) { transition-delay: 140ms; }
+  .price-group.is-visible .price-row:nth-child(4) { transition-delay: 210ms; }
+}
 .price-value {
   font-family: "IBM Plex Mono", monospace;
   color: var(--ink);
@@ -509,6 +584,12 @@ img { display: block; max-width: 100%; }
 }
 .review-featured .review-quote { font-size: 1.2rem; }
 
+@media (prefers-reduced-motion: no-preference) {
+  .review:nth-of-type(1) { transition-delay: 0ms; }
+  .review:nth-of-type(2) { transition-delay: 80ms; }
+  .review:nth-of-type(3) { transition-delay: 160ms; }
+}
+
 /* ---------- Footer ---------- */
 
 .site-footer {
@@ -561,19 +642,27 @@ img { display: block; max-width: 100%; }
     right: 0;
     background: var(--bg);
     border-bottom: 2px solid var(--gold);
-    flex-direction: column;
-    gap: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.25s var(--ease);
+    display: grid;
+    grid-template-rows: 0fr;
   }
-  .main-nav.is-open { max-height: 320px; }
+  .main-nav.is-open { grid-template-rows: 1fr; }
+  .nav-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    overflow: hidden;
+    min-height: 0;
+  }
   .main-nav a {
     padding: 16px 24px;
     border-bottom: 1px solid var(--line);
   }
   .nav-toggle { display: flex; }
   .header-actions .btn-small { display: none; }
+}
+
+@media (max-width: 860px) and (prefers-reduced-motion: no-preference) {
+  .main-nav { transition: grid-template-rows 0.25s var(--ease); }
 }
 
 @media (max-width: 640px) {

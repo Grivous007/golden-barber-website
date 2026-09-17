@@ -39,4 +39,19 @@
       el.classList.add("is-visible");
     });
   }
+
+  // Focal motion: the pole stripe only spins while it is actually on
+  // screen, so the one continuous loop on the page never runs for free.
+  if (!prefersReducedMotion && "IntersectionObserver" in window) {
+    var poleEls = document.querySelectorAll(".pole-stripe");
+    var poleObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          entry.target.classList.toggle("is-active", entry.isIntersecting);
+        });
+      },
+      { threshold: 0 }
+    );
+    poleEls.forEach(function (el) { poleObserver.observe(el); });
+  }
 })();
